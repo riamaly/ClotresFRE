@@ -10,7 +10,6 @@ import functools
 from typing import Optional
 
 import dnnlib
-import numpy as np
 import PIL.Image
 import PIL.ImageFont
 import scipy.ndimage
@@ -72,7 +71,6 @@ def _get_array_priv(
 
 @functools.lru_cache(maxsize=10000)
 def _get_array_impl(string, *, font=None, size=32, outline=0, outline_pad=3, outline_coef=3, outline_exp=2, line_pad: int=None):
-    pil_font = get_pil_font(font=font, size=size)
     lines = [pil_font.getmask(line, 'L') for line in string.split('\n')]
     lines = [np.array(line, dtype=np.uint8).reshape([line.size[1], line.size[0]]) for line in lines]
     width = max(line.shape[1] for line in lines)
@@ -95,8 +93,7 @@ def _get_array_impl(string, *, font=None, size=32, outline=0, outline_pad=3, out
 @functools.lru_cache(maxsize=10000)
 def _get_array_impl_dropshadow(string, *, font=None, size=32, radius: int, offset_x: int, offset_y: int, line_pad: int=None, **kwargs):
     assert (offset_x > 0) and (offset_y > 0)
-    pil_font = get_pil_font(font=font, size=size)
-    lines = [pil_font.getmask(line, 'L') for line in string.split('\n')]
+    pil_font = get_pil_font(font=font, size=size
     lines = [np.array(line, dtype=np.uint8).reshape([line.size[1], line.size[0]]) for line in lines]
     width = max(line.shape[1] for line in lines)
     lines = [np.pad(line, ((0, 0), (0, width - line.shape[1])), mode='constant') for line in lines]
